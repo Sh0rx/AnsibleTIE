@@ -1,0 +1,7 @@
+[all:vars]
+ansible_user=saul
+ansible_python_interpreter=/usr/bin/python3
+host_key_checking=False
+
+[clientes]
+192.168.0.209
