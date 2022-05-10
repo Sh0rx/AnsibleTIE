@@ -1,0 +1,17 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Instalar apache2
+      apt:
+        name: apache2
+        update_cache: yes
+        state: latest
+    
+    - name: Copiar index.html
+      copy: src=/home/jorge/AnsibleTIE/index.html dest=/var/www/html/index.html
+    
+    - name: Iniciar apache2
+      service:
+        name: apache2
+        state: restarted
