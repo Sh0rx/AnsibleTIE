@@ -1,7 +1,6 @@
 ---
 - hosts: all
   vars:
-    mysql_root_password: admin
   become: yes
   tasks:
     - name: Instalar MySQL
@@ -31,3 +30,14 @@
         - 127.0.0.1
         - ::1
         - localhost
+
+    - name: Abrir puerto 3306
+      community.general.ufw:
+        rule: allow
+        port: "3306"
+        proto: tcp
+
+    - name: Crear database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present

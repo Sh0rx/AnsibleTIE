@@ -1,0 +1,9 @@
+---
+- hosts: all
+  vars:
+  become: yes
+  tasks:
+    - name: Crear database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
