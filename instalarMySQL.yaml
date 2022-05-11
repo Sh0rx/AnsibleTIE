@@ -1,0 +1,33 @@
+---
+- hosts: all
+  vars:
+    mysql_root_password: admin
+  become: yes
+  tasks:
+    - name: Instalar MySQL
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      with_items:
+        - mysql-server
+        - mysql-client
+        - python3-mysqldb
+        - libmysqlclient-dev
+
+    - name: Iniciar servicio MySQL
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+    
+    - name: Actualizar contraseña para MySQL
+      mysql_user:
+        name: "{{ db_user }}"
+        host: "{{ db_pass }}"
+        priv: "*.*:ALL,GRANT"
+      with_items:
+        - "{{ ansible_hostname }}"
+        - 127.0.0.1
+        - ::1
+        - localhost
