@@ -1,0 +1,65 @@
+---
+- hosts: all
+  vars:
+  become: yes
+  tasks:
+    #- name: Instalar repositorio
+    #  apt_repository:
+    #    repo: "ppa:ondrej/php"
+
+    #- name: Actualizar el repositorio
+    #  apt: 
+    #    update_cache: yes
+    - name: Cambiar index.php para mostrar datos
+      copy: src=/home/jorge/AnsibleTIE/index.php dest=/var/www/html/index.php
+
+    - name: Instalar PHP
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - php
+        - php-mysql
+        - php-fpm
+        - libapache2-mod-php
+    
+    - name: Instalar lamp stack
+      apt:
+        pkg:
+          - php7.4-mysql
+          - php7.4-curl
+          - php7.4-json
+          - php7.4-cgi
+          - php7.4-gd
+          - php7.4-mbstring
+          - php7.4-zip
+          - php7.4-xmlrpc
+          - php7.4-soap
+          - php7.4-intl
+          - libapache2-mod-php
+        state: present
+        update_cache: yes
+
+    - name: debconf for pma
+      debconf: name=phpmyadmin question='phpmyadmin/dbconfig-install' value='true' vtype='boolean'
+
+    - name: debconf for pma
+      debconf: name=phpmyadmin question='phpmyadmin/app-password-confirm' value='{{db_pass}}' vtype='password'
+
+    - name: debconf for pma
+      debconf: name=phpmyadmin question='phpmyadmin/mysql/admin-pass' value='{{db_pass}}' vtype='password'
+
+    - name: debconf for pma
+      debconf: name=phpmyadmin question='phpmyadmin/mysql/app-pass' value='{{db_pass}}' vtype='password'
+
+    - name: debconf for pma
+      debconf: name=phpmyadmin question='phpmyadmin/reconfigure-webserver' value='' vtype='multiselect'
+
+    - name: install pma
+      apt: pkg=phpmyadmin state=present
+
+    - name: configure site
+      file: path=/var/www/pma src=/usr/share/phpmyadmin state=link
+      
+    - name: Cambiar index.php para mostrar datos
+      copy: src=/home/jorge/AnsibleTIE/index.php dest=/var/www/html/index.php
