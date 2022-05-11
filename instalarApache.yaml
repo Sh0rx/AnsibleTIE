@@ -11,6 +11,22 @@
     - name: Copiar index.html
       copy: src=/home/jorge/AnsibleTIE/index.html dest=/var/www/html/index.html
     
+    - name: Habilitamos firewall para denegar por defecto todas las conexiones
+      community.general.ufw:
+        state: enabled
+        policy: deny
+        logging: on
+
+    - name: Permitimos conexiones en los puertos 22, 80 y 443
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      with_items:
+        - "22"
+        - "80"
+        - "443"
+
     - name: Iniciar apache2
       service:
         name: apache2
